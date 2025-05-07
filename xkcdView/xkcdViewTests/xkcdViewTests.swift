@@ -8,29 +8,49 @@
 import XCTest
 @testable import xkcdView
 
-final class xkcdViewTests: XCTestCase {
-
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+@MainActor
+final class ComicDetailViewModelTests: XCTestCase {
+    
+    var mockDataManager: MockDataManager!
+    
+    override func setUp() {
+        super.setUp()
+        mockDataManager = MockDataManager()
+    }
+    
+    func testFetchComicSuccess() async {
+        let viewModel = ComicDetailViewModel(comicId: 2000, dataManager: mockDataManager)
+        
+        await viewModel.fetchComic()
+        
+        let comic = viewModel.comic
+        
+        XCTAssertNotNil(comic)
+        XCTAssertEqual(comic?.id, 2000) 
+        XCTAssertEqual(comic?.month, "5")
+        XCTAssertEqual(comic?.day, "22")
+        XCTAssertEqual(comic?.year, "2001")
+        XCTAssertEqual(comic?.link, "")
+        XCTAssertEqual(comic?.news, "")
+        XCTAssertEqual(comic?.safeTitle, "xkcd Phone 2000")
+        XCTAssertEqual(comic?.transcript, "")
+        XCTAssertEqual(comic?.alt, "Our retina display features hundreds of pixels per inch in the central fovea region.")
+        XCTAssertEqual(comic?.img, "https://imgs.xkcd.com/comics/xkcd_phone_2000.png")
+        XCTAssertEqual(comic?.title, "xkcd Phone 2000")
+        XCTAssertNil(viewModel.errorMessage)
+        XCTAssertFalse(viewModel.isLoading)
     }
 
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+    func testFetchComicFailure() async {
+        mockDataManager.shouldThrowError = true
+        let viewModel = ComicDetailViewModel(comicId: 2000, dataManager: mockDataManager)
+        
+        await viewModel.fetchComic()
+        
+        XCTAssertNil(viewModel.comic)
+        XCTAssertEqual(viewModel.errorMessage, "Error fetching the comic")
+        XCTAssertFalse(viewModel.isLoading)
     }
-
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
-    }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
-    }
-
 }
+
+    

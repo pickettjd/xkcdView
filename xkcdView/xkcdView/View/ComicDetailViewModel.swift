@@ -20,6 +20,7 @@ class ComicDetailViewModel: ObservableObject {
         self.dataManager = dataManager
         self.comicId = comicId
     }
+    
     func fetchComic() async {
         do {
             self.isLoading = true

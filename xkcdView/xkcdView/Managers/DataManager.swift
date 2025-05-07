@@ -16,18 +16,11 @@ enum APIError: Error {
 
 protocol DataAPI {
     func fetchComic(comicId: Int) async throws -> ComicModel
-    func fetchTodaysComic(comicId: Int) async throws -> ComicModel
 }
 
 class DataManager: DataAPI {
     let apiURLBase = "https://xkcd.com/"
     
-    func fetchTodaysComic(comicId: Int) async throws -> ComicModel {
-        let urlString = "\(apiURLBase)/info.0.json"
-        
-        return try await fetch(urlString: urlString)
-    }
-
     func fetchComic(comicId: Int) async throws -> ComicModel {
         let urlString = "\(apiURLBase)\(comicId)/info.0.json"
         
