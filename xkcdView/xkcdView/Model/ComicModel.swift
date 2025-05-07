@@ -27,4 +27,8 @@ struct ComicModel: Codable, Identifiable {
         case safeTitle = "safe_title"
         case transcript, alt, img, title, day
     }
+    
+    var date: String {
+        return Date.createDateStringFromComponents(year: year, month: month, day: day)
+    }
 }
