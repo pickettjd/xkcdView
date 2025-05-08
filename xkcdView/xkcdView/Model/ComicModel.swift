@@ -32,3 +32,23 @@ struct ComicModel: Codable, Identifiable {
         return Date.createDateStringFromComponents(year: year, month: month, day: day)
     }
 }
+
+extension ComicModel {
+    init(cachedComic: CachedComic) {
+        self.init(
+            month: cachedComic.month,
+            id: cachedComic.id,
+            link: nil,
+            year: cachedComic.year,
+            news: nil,
+            safeTitle: cachedComic.title,
+            transcript: nil,
+            alt: "",
+            img: cachedComic.imageUrl,
+            title: cachedComic.title,
+            day: cachedComic.day
+        )
+    }
+}
+
+

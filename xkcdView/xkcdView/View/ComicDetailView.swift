@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ComicDetailView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
     @StateObject var viewModel: ComicDetailViewModel
     
     init(comicNumber: Int) {
@@ -37,6 +38,7 @@ struct ComicDetailView: View {
             Text(errorMsg)
         }
         .task {
+            viewModel.setContext(modelContext)
             await viewModel.fetchComic()
         }
     }

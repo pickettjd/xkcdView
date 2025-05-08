@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct xkcdViewApp: App {
@@ -13,5 +14,6 @@ struct xkcdViewApp: App {
         WindowGroup {
             ComicSelectionView()
         }
+        .modelContainer(for: CachedComic.self)
     }
 }
