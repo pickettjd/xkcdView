@@ -10,6 +10,7 @@ import SwiftUI
 struct ComicDetailView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
+    @EnvironmentObject var networkManager: NetworkManager
     @StateObject var viewModel: ComicDetailViewModel
     
     init(comicNumber: Int) {
@@ -17,37 +18,42 @@ struct ComicDetailView: View {
     }
     
     var body: some View {
-        ScrollView {
-            VStack (alignment: .center) {
-                if viewModel.isLoading {
-                    ProgressView()
-                } else if let comic = viewModel.comic,
-                          let url = URL(string: comic.img) {
-                    ComicView(comic: comic, comicImgURL: url)
-                } else {
-                    EmptyView()
+        if networkManager.isConnected {
+            ScrollView {
+                VStack (alignment: .center) {
+                    if viewModel.isLoading {
+                        ProgressView()
+                    } else if let comic = viewModel.comic,
+                              let url = URL(string: comic.img) {
+                        ComicView(comic: comic, comicImgURL: url)
+                    } else {
+                        EmptyView()
+                    }
+                }
+                .navigationTitle("Comic #: \(String(viewModel.comicId))")
+                .navigationBarTitleDisplayMode(.inline)
+                .alert("Error", isPresented: .constant(viewModel.errorMessage != nil), presenting: viewModel.errorMessage) { errorMessage in
+                    Button("Ok", role: .cancel) {
+                        viewModel.errorMessage = nil
+                        dismiss()
+                    }
+                } message: { errorMsg in
+                    Text(errorMsg)
+                }
+                .task {
+                    viewModel.setContext(modelContext)
+                    await viewModel.fetchComic()
                 }
             }
-            .navigationTitle("Comic #: \(String(viewModel.comicId))")
-            .navigationBarTitleDisplayMode(.inline)
-            .alert("Error", isPresented: .constant(viewModel.errorMessage != nil), presenting: viewModel.errorMessage) { errorMessage in
-                Button("Ok", role: .cancel) {
-                    viewModel.errorMessage = nil
-                    dismiss()
-                }
-            } message: { errorMsg in
-                Text(errorMsg)
-            }
-            .task {
-                viewModel.setContext(modelContext)
-                await viewModel.fetchComic()
-            }
+        } else {
+            NoNetworkView()
         }
     }
 }
 
 #Preview {
     ComicDetailView(comicNumber: 3086)
+        .environmentObject(NetworkManager())
 }
 
 struct ComicView: View {

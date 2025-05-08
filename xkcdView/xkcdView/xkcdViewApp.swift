@@ -10,9 +10,12 @@ import SwiftData
 
 @main
 struct xkcdViewApp: App {
+    @StateObject private var networkManager = NetworkManager()
+    
     var body: some Scene {
         WindowGroup {
             ComicSelectionView()
+                .environmentObject(networkManager)
         }
         .modelContainer(for: CachedComic.self)
     }

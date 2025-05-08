@@ -75,18 +75,20 @@ struct ComicInputView: View {
             }
             .padding(.vertical, 30)
 
-            Button("Submit") {
+            Button(action: {
                 if let num = Int(selectedComicNum) {
                     navPath.append(num)
                 }
+            }) {
+                Text("Submit")
+                    .frame(maxWidth: 200)
+                    .padding()
+                    .background(Color.accentColor)
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
+                    .opacity(selectedComicNum.isEmpty ? 0.6 : 1.0)
             }
             .disabled(selectedComicNum.isEmpty)
-            .frame(maxWidth: 200)
-            .padding()
-            .background(Color.accentColor)
-            .foregroundColor(.white)
-            .cornerRadius(8)
-            .opacity(selectedComicNum.isEmpty ? 0.6 : 1.0)
         }
     }
 }

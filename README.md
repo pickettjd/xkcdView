@@ -21,9 +21,10 @@ Here’s an overview of the steps I followed:
 - Wrote unit tests to validate functionality.  
 - Performed initial code cleanup.
 
-Once the fundamentals were in place, I added several improvements:
+Once the fundamentals were in place, I spentn some additional time  added several improvements:
 
 - Integrated SwiftData for caching. While I don’t have extensive experience with SwiftData, this was a good opportunity to explore it and implement response caching.  
 - Identified and resolved several layout issues.  
-- Conducted additional rounds of code cleanup.
+- Conducted additional code cleanup.
+- Added the no network page
 
