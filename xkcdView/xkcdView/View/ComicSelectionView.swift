@@ -39,6 +39,7 @@ struct ComicSelectionView: View {
 
 #Preview {
     ComicSelectionView()
+        .environmentObject(NetworkManager())
 }
 
 struct TitleView: View {
