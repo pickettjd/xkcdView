@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 struct ComicModel: Codable, Identifiable {
     let month: String
     let id: Int

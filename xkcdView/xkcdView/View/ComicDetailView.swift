@@ -17,35 +17,37 @@ struct ComicDetailView: View {
     }
     
     var body: some View {
-        VStack (alignment: .center) {
-            if viewModel.isLoading {
-                ProgressView()
-            } else if let comic = viewModel.comic,
-                      let url = URL(string: comic.img) {
-                ComicView(comic: comic, comicImgURL: url)
-            } else {
-                EmptyView()
+        ScrollView {
+            VStack (alignment: .center) {
+                if viewModel.isLoading {
+                    ProgressView()
+                } else if let comic = viewModel.comic,
+                          let url = URL(string: comic.img) {
+                    ComicView(comic: comic, comicImgURL: url)
+                } else {
+                    EmptyView()
+                }
             }
-        }
-        .navigationTitle("xkcd Comic #\(viewModel.comicId)")
-        .navigationBarTitleDisplayMode(.inline)
-        .alert("Error", isPresented: .constant(viewModel.errorMessage != nil), presenting: viewModel.errorMessage) { errorMessage in
-            Button("Ok", role: .cancel) {
-                viewModel.errorMessage = nil
-                dismiss()
+            .navigationTitle("Comic #: \(String(viewModel.comicId))")
+            .navigationBarTitleDisplayMode(.inline)
+            .alert("Error", isPresented: .constant(viewModel.errorMessage != nil), presenting: viewModel.errorMessage) { errorMessage in
+                Button("Ok", role: .cancel) {
+                    viewModel.errorMessage = nil
+                    dismiss()
+                }
+            } message: { errorMsg in
+                Text(errorMsg)
             }
-        } message: { errorMsg in
-            Text(errorMsg)
-        }
-        .task {
-            viewModel.setContext(modelContext)
-            await viewModel.fetchComic()
+            .task {
+                viewModel.setContext(modelContext)
+                await viewModel.fetchComic()
+            }
         }
     }
 }
 
 #Preview {
-    ComicDetailView(comicNumber: 111)
+    ComicDetailView(comicNumber: 3086)
 }
 
 struct ComicView: View {
@@ -58,11 +60,19 @@ struct ComicView: View {
     }
     
     var body: some View {
-        VStack(alignment: .center, spacing: 20) {
-            Text("\(comic.title)")
-                .font(.headline)
-                .fontWeight(.bold)
-            
+        VStack(alignment: .center) {
+            Text(comic.title)
+                .font(.title3)
+                .fontWeight(.semibold)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal)
+                .padding(.top, 30)
+            Text(comic.date)
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.bottom, 60)
+
             AsyncImage(url: comicImgURL) { phase in
                 switch phase {
                 case .empty:
@@ -72,16 +82,16 @@ struct ComicView: View {
                         .resizable()
                         .scaledToFit()
                         .shadow(radius: 10)
+                        .border(.primary, width: 3)
                 case .failure:
                     Image(systemName: "photo")
                 @unknown default:
                     EmptyView()
                 }
             }
-            .padding()
-            Text("\(comic.date)")
-                .font(.subheadline)
-                .fontWeight(.semibold)
+            .padding(.horizontal)
+
+            Spacer()
         }
-    }
-}
+        .frame(maxWidth: .infinity)
+    }}
